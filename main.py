@@ -13,37 +13,55 @@ LANGUAGES = [
 
 
 def count_vacancies_by_language(languages):
+    page = 0
+    pages_count = 1
     vacancies_found = {}
     url = 'https://api.hh.ru/vacancies'
     for language in languages:
-        payload = {'text': 'программист {}'.format(language),
-                   'area': '1',
-                   'period': '30'
-        }
-        response = requests.get(url, params=payload)
-        response.raise_for_status()
-        vacancies_found[language] = response.json()['found']
-    print(vacancies_found)
+        while page < pages_count:
+            payload = {
+                'text': 'программист {}'.format(language),
+                'area': '1',
+                'period': '30',
+                'page': page
+            }
+            response = requests.get(url, params=payload)
+            response.raise_for_status()
+            pages_count = response.json()['pages']
+            vacancies_found[language] = response.json()['found']
+            page += 1
     return vacancies_found
 
 
 def get_salaries_by_language(languages):
-    salaries = []
+    raw_salaries = []
+    rub_salaries = []
+    vacancies_processed_storage = []
+    average_salaries = []
+    page = 0
+    pages_count = 1
     for language in languages:
-        url = 'https://api.hh.ru/vacancies'
-        payload = {'text': 'программист {}'.format(language),
-                   'area': '1',
-                   'period': '30'
-                   }
-        response = requests.get(url, params=payload)
-        response.raise_for_status()
-        items = response.json()['items']
+        while page < pages_count:
+            url = 'https://api.hh.ru/vacancies'
+            payload = {
+                'text': 'программист {}'.format(language),
+                'area': '1',
+                'period': '30'
+            }
+            response = requests.get(url, params=payload)
+            response.raise_for_status()
+            pages_count = response.json()['pages']
+            items = response.json()['items']
+            page += 1
         for item in items:
-            salaries.append(item['salary'])
-    rub_salaries = predict_rub_salary(salaries)
-    vacancies_processed, average_salary = count_average_salary(rub_salaries)
-    print(vacancies_processed, average_salary)
-    return vacancies_processed, (average_salary)
+            raw_salaries.append(item['salary'])
+        rub_salaries.append(predict_rub_salary(raw_salaries))
+        raw_salaries = []
+    for rub_salary in rub_salaries:
+        vacancies_processed, average_salary = count_average_salary(rub_salary)
+        vacancies_processed_storage.append(vacancies_processed)
+        average_salaries.append(average_salary)
+    return vacancies_processed_storage, average_salaries
 
 
 def predict_rub_salary(salaries):
@@ -74,19 +92,22 @@ def count_average_salary(rub_salaries):
     return vacancies_processed, int(average_salary)
 
 
-def make_vacancies_statistics(vacancies_found):#, vacancies_processed, average_salaries
-    statistics = {}
-    for vacancy in vacancies_found:
-        statistics[vacancy] = {}
-        statistics[vacancy]['vacancies_found'] = vacancies_found[vacancy]
+def make_vacancies_statistics(vacancies_found, vacancies_processed, avg_salary):
+    stats = {}
+    for vacancy_num, vacancy in enumerate(vacancies_found):
+        stats[vacancy] = {}
+        stats[vacancy]['vacancies_found'] = vacancies_found[vacancy]
+        stats[vacancy]['vacancies_processed'] = vacancies_processed[vacancy_num]
+        stats[vacancy]['average_salary'] = avg_salary[vacancy_num]
+    return stats
+
+
+if __name__ == '__main__':
+    vacancies_found = count_vacancies_by_language(LANGUAGES)
+    vacancies_processed, average_salaries = get_salaries_by_language(LANGUAGES)
+    statistics = make_vacancies_statistics(
+        vacancies_found,
+        vacancies_processed,
+        average_salaries)
     print(statistics)
 
-
-
-vacancies_found = count_vacancies_by_language(LANGUAGES)
-#make_vacancies_statistics(vacancies_found)
-salaries = get_salaries_by_language(LANGUAGES[0])
-print(salaries)
-#rub_salaries = predict_rub_salary(salaries)
-#vacancies_processed, average_salary = count_average_salary(rub_salaries)
-#print(vacancies_processed, average_salary)
