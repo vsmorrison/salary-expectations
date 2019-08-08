@@ -12,13 +12,12 @@ LANGUAGES = [
 ]
 
 
-def count_vacancies_by_language(languages):
+def get_pages(languages):
     page = 0
-    pages_count = 1
-    vacancies_found = {}
+    page_count = 1
     url = 'https://api.hh.ru/vacancies'
     for language in languages:
-        while page < pages_count:
+        while page < page_count:
             payload = {
                 'text': 'программист {}'.format(language),
                 'area': '1',
@@ -26,10 +25,24 @@ def count_vacancies_by_language(languages):
                 'page': page
             }
             response = requests.get(url, params=payload)
-            response.raise_for_status()
-            pages_count = response.json()['pages']
-            vacancies_found[language] = response.json()['found']
             page += 1
+            page_count = response.json()['pages']
+            print(language, page)
+        page = 0
+    #print(languages, page)
+
+def count_vacancies_by_language(languages):
+    vacancies_found = {}
+    url = 'https://api.hh.ru/vacancies'
+    for language in languages:
+        payload = {
+            'text': 'программист {}'.format(language),
+            'area': '1',
+            'period': '30',
+        }
+        response = requests.get(url, params=payload)
+        response.raise_for_status()
+        vacancies_found[language] = response.json()['found']
     return vacancies_found
 
 
@@ -39,24 +52,27 @@ def get_salaries_by_language(languages):
     vacancies_processed_storage = []
     average_salaries = []
     page = 0
-    pages_count = 1
+    page_count = 1
     for language in languages:
-        while page < pages_count:
+        while page < page_count:
             url = 'https://api.hh.ru/vacancies'
             payload = {
                 'text': 'программист {}'.format(language),
                 'area': '1',
-                'period': '30'
+                'period': '30',
+                'page': page
             }
             response = requests.get(url, params=payload)
             response.raise_for_status()
-            pages_count = response.json()['pages']
             items = response.json()['items']
+            for item in items:
+                raw_salaries.append(item['salary'])
+            rub_salaries.append(predict_rub_salary(raw_salaries))
+            raw_salaries = []
             page += 1
-        for item in items:
-            raw_salaries.append(item['salary'])
-        rub_salaries.append(predict_rub_salary(raw_salaries))
-        raw_salaries = []
+            page_count = response.json()['pages']
+            print(language, page)
+        page = 0
     for rub_salary in rub_salaries:
         vacancies_processed, average_salary = count_average_salary(rub_salary)
         vacancies_processed_storage.append(vacancies_processed)
@@ -102,12 +118,14 @@ def make_vacancies_statistics(vacancies_found, vacancies_processed, avg_salary):
     return stats
 
 
-if __name__ == '__main__':
-    vacancies_found = count_vacancies_by_language(LANGUAGES)
-    vacancies_processed, average_salaries = get_salaries_by_language(LANGUAGES)
-    statistics = make_vacancies_statistics(
-        vacancies_found,
-        vacancies_processed,
-        average_salaries)
-    print(statistics)
+#if __name__ == '__main__':
+#get_pages(LANGUAGES)
+vacancies_found = count_vacancies_by_language(LANGUAGES)
+vacancies_processed, average_salaries = get_salaries_by_language(LANGUAGES)
+statistics = make_vacancies_statistics(
+    vacancies_found,
+    vacancies_processed,
+    average_salaries
+)
+print(statistics)
 
