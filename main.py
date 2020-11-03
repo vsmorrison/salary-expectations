@@ -12,7 +12,7 @@ LANGUAGES = [
 ]
 
 
-def get_pages(languages):
+'''def get_pages(languages):
     page = 0
     page_count = 1
     url = 'https://api.hh.ru/vacancies'
@@ -29,7 +29,7 @@ def get_pages(languages):
             page_count = response.json()['pages']
             print(language, page)
         page = 0
-    #print(languages, page)
+    #print(languages, page)'''
 
 def count_vacancies_by_language(languages):
     vacancies_found = {}
