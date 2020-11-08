@@ -12,10 +12,18 @@ LANGUAGES = [
 ]
 
 TEST = [
-    1,
-    2,
-    3,
-    4
+    [
+        1,
+        2,
+        3,
+        4
+    ],
+    [
+        5,
+        6,
+        7,
+        8
+    ]
 ]
 URL = 'https://api.hh.ru/vacancies'
 
@@ -59,15 +67,14 @@ def get_avg_salaries(url, languages):
 
 
 def count_avg_salary(salaries):
-    vacancies_processed = len(salaries)
+    vacancies_processed = 0
     total_salary = 0
     for salary in salaries:
-        if salary == 0:
-            vacancies_processed -= 1
-        total_salary += salary
+        if salary != 0:
+            vacancies_processed += 1
+            total_salary += salary
     avg_salary = int(total_salary / vacancies_processed)
     return avg_salary, vacancies_processed
-
 
 
 def predict_rub_salary(python_salaries):
@@ -87,16 +94,29 @@ def predict_rub_salary(python_salaries):
 
 
 def make_vacancies_stats(vacancies_found, vacancies_processed, avg_salaries):
-    statistics = {}
-    for
+    stats = {}
+    for vacancy_num, vacancy in enumerate(vacancies_found):
+        stats[vacancy] = {}
+        stats[vacancy]['vacancies_found'] = vacancies_found[vacancy]
+        stats[vacancy]['vacancies_processed'] = vacancies_processed[vacancy_num]
+        stats[vacancy]['average_salary'] = avg_salaries[vacancy_num]
+        #stats[vacancy]['vacanies_found'] = vacancies_found[vacancy]
+    #print(stats)'''
+    return stats
+
 
 if __name__ == '__main__':
     #print(count_vacancies_by_lang(URL, LANGUAGES))
     num_of_vacancies_by_lang = (count_vacancies_by_lang(URL, LANGUAGES))
-    salaries = (get_avg_salaries(URL, LANGUAGES))
+    avg_salaries, vacancies_processed = (get_avg_salaries(URL, LANGUAGES))
+    stats = make_vacancies_stats(num_of_vacancies_by_lang, vacancies_processed, avg_salaries)
+    #print(stats)
+    print(avg_salaries)
+    print(vacancies_processed)
     #print(count_avg_salary(TEST))
     #for salary in salaries:
     #    print(salary)
     #predicted_salaries = (predict_rub_salary(salaries))
     #print(predicted_salaries)'''
     #vacancies_stats = make_vacancies_stats()
+    #print(test(TEST))
