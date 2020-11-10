@@ -23,6 +23,13 @@ TEST = [
         6,
         7,
         8
+    ],
+    [
+        10,
+        10,
+        10,
+        10,
+        10
     ]
 ]
 URL = 'https://api.hh.ru/vacancies'
@@ -58,11 +65,13 @@ def get_avg_salaries(url, languages):
         language_vacancies = response.json()['items']
         for vacancy in language_vacancies:
             raw_salaries.append(vacancy['salary'])
-        predicted_salaries.append(predict_rub_salary(raw_salaries))
-        for salary in predicted_salaries:
-            avg_salary, vacancies_processed = count_avg_salary(salary)
-        avg_salaries.append(avg_salary)
-        vacancies_processed_strg.append(vacancies_processed)
+    predicted_salaries.append(predict_rub_salary(raw_salaries))
+    for salary in predicted_salaries:
+        avg_salary, vacancies_processed = count_avg_salary(salary)
+    avg_salaries.append(avg_salary)
+    vacancies_processed_strg.append(vacancies_processed)
+    print(avg_salaries)
+    #print(predicted_salaries)
     return avg_salaries, vacancies_processed_strg
 
 
@@ -101,7 +110,7 @@ def make_vacancies_stats(vacancies_found, vacancies_processed, avg_salaries):
         stats[vacancy]['vacancies_processed'] = vacancies_processed[vacancy_num]
         stats[vacancy]['average_salary'] = avg_salaries[vacancy_num]
         #stats[vacancy]['vacanies_found'] = vacancies_found[vacancy]
-    #print(stats)'''
+    print(stats)
     return stats
 
 
@@ -109,14 +118,18 @@ if __name__ == '__main__':
     #print(count_vacancies_by_lang(URL, LANGUAGES))
     num_of_vacancies_by_lang = (count_vacancies_by_lang(URL, LANGUAGES))
     avg_salaries, vacancies_processed = (get_avg_salaries(URL, LANGUAGES))
-    stats = make_vacancies_stats(num_of_vacancies_by_lang, vacancies_processed, avg_salaries)
+    #stats = make_vacancies_stats(num_of_vacancies_by_lang, vacancies_processed, avg_salaries)
     #print(stats)
-    print(avg_salaries)
-    print(vacancies_processed)
-    #print(count_avg_salary(TEST))
+    #print(avg_salaries)
+    #print(vacancies_processed)
     #for salary in salaries:
     #    print(salary)
     #predicted_salaries = (predict_rub_salary(salaries))
     #print(predicted_salaries)'''
     #vacancies_stats = make_vacancies_stats()
     #print(test(TEST))
+
+    '''for i in range(len(TEST)):
+        avg_salary, vacancies_processed = count_avg_salary(TEST[i])
+        print(avg_salary)
+        print(vacancies_processed)'''
