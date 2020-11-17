@@ -50,6 +50,7 @@ def count_vacancies_by_lang(url, languages):
 
 
 def get_avg_salaries(url, languages):
+    items = []
     raw_salaries = []
     language_salaries_by_page = []
     predicted_salaries = []
@@ -63,13 +64,22 @@ def get_avg_salaries(url, languages):
         }
         response = requests.get(url, params=payload)
         response.raise_for_status()
-        items = response.json()['items']
+        items.append(response.json()['items'])
         for item in items:
-            language_salaries_by_page.append(item['salary'])
-        raw_salaries.append(language_salaries_by_page)
+            for i in item:
+                language_salaries_by_page.append(i['salary'])
+                print(language_salaries_by_page)
+        # for item in items:
+        #     print(item)
+        #     language_salaries_by_page.append(item['salary'])
+    #print(len(language_salaries_by_page))
+            #print(language_salaries_by_page)
+        # for i in range(1):
+        #     raw_salaries.append(language_salaries_by_page)
     #print(language_vacancies)
-    print(len(raw_salaries))
-    print(raw_salaries)
+    #print(len(raw_salaries))
+    # print(len(raw_salaries))
+    # print(raw_salaries)
     #predicted_salaries = predict_rub_salary(raw_salaries)
     #for salary in predicted_salaries:
     #avg_salary, vacancies_processed = count_avg_salary(predicted_salaries)
