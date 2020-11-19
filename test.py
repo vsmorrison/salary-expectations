@@ -29,21 +29,28 @@ def count_vacancies_by_lang(url, languages):
 
 
 def get_raw_salaries(url, languages):
+    page = 0
+    pages_number = 1
     raw_salaries = []
     salaries_by_page = []
     for language in languages:
-        payload = {
-            'text': 'программист {}'.format(language),
-            'area': '1',
-            'period': '30'
-        }
-        response = requests.get(url, params=payload)
-        response.raise_for_status()
-        items = response.json()['items']
-        for item in items:
-            salaries_by_page.append(item['salary'])
-        raw_salaries.append(salaries_by_page)
-        salaries_by_page = []
+        while page < pages_number:
+            payload = {
+                'text': 'программист {}'.format(language),
+                'area': '1',
+                'period': '30',
+                'page': page
+            }
+            response = requests.get(url, params=payload)
+            response.raise_for_status()
+            items = response.json()['items']
+            pages_number = response.json()['pages']
+            print(page, language)
+            for item in items:
+                salaries_by_page.append(item['salary'])
+            raw_salaries.append(salaries_by_page)
+            salaries_by_page = []
+        page += 1
     return raw_salaries
 
 
@@ -61,8 +68,6 @@ def count_avg_salaries(predicted_salaries):
         avg_salary, vacancies_processed = count_avg_salary(salary)
         avg_salaries.append(avg_salary)
         vacancies_processed_values.append(vacancies_processed)
-    print(avg_salaries)
-    print(vacancies_processed_values)
     return avg_salaries, vacancies_processed_values
 
 
@@ -104,7 +109,27 @@ def make_vacancies_stats(vacancies_found, vacancies_processed, avg_salaries):
     return stats
 
 
+def test_for_pages(url):
+    page = 0
+    pages_number = 1
+    while page <= pages_number:
+        payload = {
+            'text': 'программист python',
+            'area': '1',
+            'period': '30',
+            'page': page
+        }
+        response = requests.get(url, params=payload)
+        response.raise_for_status()
+        pages_number = response.json()['pages']
+        print(page)
+        page += 1
+
+
+
+
 if __name__ == '__main__':
+    #test_for_pages(URL)
     num_of_vacancies_by_lang = (count_vacancies_by_lang(URL, LANGUAGES))
     raw_salaries = get_raw_salaries(URL, LANGUAGES)
     predicted_salaries = predict_salaries(raw_salaries)
