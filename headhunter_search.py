@@ -45,12 +45,12 @@ def get_raw_salaries(url, languages):
             response.raise_for_status()
             items = response.json()['items']
             pages_number = response.json()['pages']
-            print(page, language)
+            page += 1
             for item in items:
                 salaries_by_page.append(item['salary'])
-            raw_salaries.append(salaries_by_page)
-            salaries_by_page = []
-        page += 1
+        page = 0
+        raw_salaries.append(salaries_by_page)
+        salaries_by_page = []
     return raw_salaries
 
 
@@ -109,28 +109,8 @@ def make_vacancies_stats(vacancies_found, vacancies_processed, avg_salaries):
     return stats
 
 
-def test_for_pages(url):
-    page = 0
-    pages_number = 1
-    while page <= pages_number:
-        payload = {
-            'text': 'программист python',
-            'area': '1',
-            'period': '30',
-            'page': page
-        }
-        response = requests.get(url, params=payload)
-        response.raise_for_status()
-        pages_number = response.json()['pages']
-        print(page)
-        page += 1
-
-
-
-
 if __name__ == '__main__':
-    #test_for_pages(URL)
-    num_of_vacancies_by_lang = (count_vacancies_by_lang(URL, LANGUAGES))
+    num_of_vacancies_by_lang = count_vacancies_by_lang(URL, LANGUAGES)
     raw_salaries = get_raw_salaries(URL, LANGUAGES)
     predicted_salaries = predict_salaries(raw_salaries)
     avg_salaries, vacancies_processed_values = count_avg_salaries(predicted_salaries)
