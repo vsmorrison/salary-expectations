@@ -27,7 +27,7 @@ def get_vacancies(url, secret_key):
     response.raise_for_status()
     vacancies = response.json()['objects']
     for vacancy in vacancies:
-        print('{}, {}'.format(vacancy['profession'], vacancy['town']['title']))
+        print(f"{vacancy['profession']}, {vacancy['town']['title']}")
     return
 
 
