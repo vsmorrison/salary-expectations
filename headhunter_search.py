@@ -36,7 +36,7 @@ def get_raw_salaries(url, languages):
     for language in languages:
         while page < pages_number:
             payload = {
-                'text': f'программист {language}',
+                'title': f'программист {language}',
                 'area': '1',
                 'period': '30',
                 'page': page
