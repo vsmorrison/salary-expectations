@@ -25,13 +25,11 @@ def get_vacancies(url, secret_key):
     }
     response = requests.get(url, headers=headers, params=payload)
     response.raise_for_status()
-    vacancies = response.json()['objects']
-    for vacancy in vacancies:
+    sj_vacancies = response.json()['objects']
+    for vacancy in sj_vacancies:
         print(f"{vacancy['profession']}, {vacancy['town']['title']}")
-    return
+    return vacancies
 
 
 if __name__ == '__main__':
     vacancies = get_vacancies(URL, SECRET_KEY)
-    print(vacancies)
-

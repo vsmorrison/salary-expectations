@@ -41,6 +41,7 @@ def count_avg_salary(salaries):
     avg_salary = int(total_salary / vacancies_processed)
     return avg_salary, vacancies_processed
 
+
 def make_vacancies_stats(vacancies_found, vacancies_processed, avg_salaries):
     stats = {}
     for vacancy_num, vacancy in enumerate(vacancies_found):
@@ -48,5 +49,4 @@ def make_vacancies_stats(vacancies_found, vacancies_processed, avg_salaries):
         stats[vacancy]['vacancies_found'] = vacancies_found[vacancy]
         stats[vacancy]['vacancies_processed'] = vacancies_processed[vacancy_num]
         stats[vacancy]['average_salary'] = avg_salaries[vacancy_num]
-    print(stats)
     return stats
