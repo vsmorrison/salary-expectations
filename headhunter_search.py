@@ -1,16 +1,13 @@
 import requests
 
 HH_LANGUAGES = [
-    'Javascript',
-    'Java',
-    'Python',
-    'Ruby',
-    'PHP',
     'C++',
-    'C#',
-    'C',
-    'Go'
+    'Python'
 ]
+
+# LANGUAGES = [
+#     'Javascript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'C', 'Go'
+# ]
 HH_URL = 'https://api.hh.ru/vacancies'
 
 
@@ -32,11 +29,11 @@ def get_raw_salaries(url, languages):
     page = 0
     pages_number = 1
     raw_salaries = []
-    salaries_by_page = []
+    salaries_by_language = []
     for language in languages:
         while page < pages_number:
             payload = {
-                'title': f'программист {language}',
+                'text': f'{language}',
                 'area': '1',
                 'period': '30',
                 'page': page
@@ -48,8 +45,14 @@ def get_raw_salaries(url, languages):
             print(language, page)
             page += 1
             for item in items:
-                salaries_by_page.append(item['salary'])
+                salaries_by_language.append(item['salary'])
         page = 0
-        raw_salaries.append(salaries_by_page)
-        salaries_by_page = []
+        raw_salaries.append(salaries_by_language)
+        salaries_by_language = []
     return raw_salaries
+
+
+# if __name__ == '__main__':
+#     num_of_vacancies = count_vacancies(HH_URL, HH_LANGUAGES)
+#     raw_salaries = get_raw_salaries(HH_URL, HH_LANGUAGES)
+#     print(raw_salaries)
