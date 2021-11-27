@@ -32,7 +32,7 @@ def get_raw_salaries(url, languages):
             response.raise_for_status()
             items = response.json()['items']
             pages_number = response.json()['pages']
-            print(language, page)
+            #print(language, page)
             page += 1
             for item in items:
                 salaries_by_language.append(item['salary'])

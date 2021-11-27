@@ -38,7 +38,7 @@ def get_raw_salaries(url, languages, secret_key):
             response = requests.get(url, params=payload, headers=headers)
             response.raise_for_status()
             items = response.json()['objects']
-            print(language, page)
+            #print(language, page)
             page += 1
             for item in items:
                 salaries_by_language.append([item['payment_from'],
