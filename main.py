@@ -67,6 +67,10 @@ def make_sj_statistics():
     return stats
 
 
-if __name__ == '__main__':
+def main():
     draw_hh_table(TABLE_DATA)
     draw_sj_table(TABLE_DATA)
+
+
+if __name__ == '__main__':
+    main()
