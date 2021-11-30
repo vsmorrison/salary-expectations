@@ -19,12 +19,13 @@ def count_vacancies(url, secret_key, languages):
     return num_of_vacancies
 
 
-def get_raw_salaries(url, languages, secret_key):
+def get_salaries_by_lang(url, languages, secret_key):
     page = 0
     pages_number = 1
-    raw_salaries = []
-    salaries_by_language = []
+    salaries_by_lang = {}
+    vacancies = {}
     for language in languages:
+        salaries_by_lang[f'{language}'] = {}
         while page < pages_number:
             headers = {
                 'X-Api-App-Id': secret_key
@@ -38,14 +39,13 @@ def get_raw_salaries(url, languages, secret_key):
             response = requests.get(url, params=payload, headers=headers)
             response.raise_for_status()
             items = response.json()['objects']
-            #print(language, page)
+            print(language, page)
             page += 1
-            for item in items:
-                salaries_by_language.append([item['payment_from'],
-                                             item['payment_to'],
-                                             item['currency']
-                                             ])
+            for index, item in enumerate(items):
+                vacancies['from'] = item['payment_from']
+                vacancies['to'] = item['payment_to']
+                vacancies['currency'] = item['currency']
+                salaries_by_lang[f'{language}'][index] = vacancies
+                vacancies = {}
         page = 0
-        raw_salaries.append(salaries_by_language)
-        salaries_by_language = []
-    return raw_salaries
+    return salaries_by_lang
