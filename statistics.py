@@ -1,6 +1,7 @@
 import superjob_search
 import headhunter_search
-import utilities
+import salary_count as sc
+import salary_prediction as sp
 from settings import SECRET_KEY
 
 
@@ -11,33 +12,30 @@ LANGUAGES = [
 
 def make_hh_statistics():
     hh_url = 'https://api.hh.ru/vacancies'
-    num_of_vacancies = headhunter_search.count_vacancies(hh_url, LANGUAGES)
-    raw_salaries = headhunter_search.get_raw_salaries(hh_url, LANGUAGES)
-    predicted_salaries = utilities.predict_hh_salaries(raw_salaries)
-    avg_salaries, vacancies_processed_values = utilities.count_avg_salaries(
-        predicted_salaries)
-    stats = utilities.make_vacancies_stats(
-        num_of_vacancies,
-        vacancies_processed_values,
-        avg_salaries
-    )
+    raw_salaries = headhunter_search.get_salaries_by_lang(hh_url, LANGUAGES)
+    predicted_salaries = sp.predict_hh_rub_salary(raw_salaries)
+    avg_salaries = sc.count_avg_salaries(predicted_salaries)
+    stats = make_vacancies_stats(raw_salaries, avg_salaries)
     return stats
 
 
 def make_sj_statistics():
     sj_url = 'https://api.superjob.ru/2.0/vacancies/'
-    num_of_vacancies = superjob_search.count_vacancies(sj_url, SECRET_KEY,
-                                                       LANGUAGES
-                                                       )
-    raw_salaries = superjob_search.get_raw_salaries(sj_url, LANGUAGES,
-                                                    SECRET_KEY
-                                                    )
-    predicted_salaries = utilities.predict_sj_salaries(raw_salaries)
-    avg_salaries, vacancies_processed_values = utilities.count_avg_salaries(
-        predicted_salaries)
-    stats = utilities.make_vacancies_stats(
-        num_of_vacancies,
-        vacancies_processed_values,
-        avg_salaries
-    )
+    raw_salaries = superjob_search.get_salaries_by_lang(sj_url, LANGUAGES,
+                                                        SECRET_KEY
+                                                        )
+    predicted_salaries = sp.predict_sj_rub_salary(raw_salaries)
+    avg_salaries = sc.count_avg_salaries(predicted_salaries)
+    stats = make_vacancies_stats(raw_salaries, avg_salaries)
     return stats
+
+
+def make_vacancies_stats(raw_salaries, avg_salaries):
+    statistics = {}
+    for language in raw_salaries:
+        statistics[language] = {}
+        statistics[language]['vacancies_found'] = raw_salaries[language]['total']
+        statistics[language]['vacancies_processed'] = avg_salaries[language]['vacancies_processed']
+        statistics[language]['avg_salary'] = avg_salaries[language]['avg_salary']
+    return statistics
+
