@@ -2,6 +2,7 @@ import requests
 
 
 def get_salaries_by_lang(url, languages, secret_key):
+    input_data = {'Moscow_id': 4, 'SPb_id': 14, 'SW_Development_id': 48}
     page = 0
     pages_number = 1
     salaries_by_lang = {}
@@ -15,14 +16,13 @@ def get_salaries_by_lang(url, languages, secret_key):
             }
             payload = {
                 'keyword': f'программист {language}',
-                'town': 4,
-                'catalogues': 48,
+                'town': f'{input_data["Moscow_id"]}',
+                'catalogues': f'{input_data["SW_Development_id"]}',
                 'count': 100
             }
             response = requests.get(url, params=payload, headers=headers)
             response.raise_for_status()
             items = response.json()
-            #print(language, page)
             page += 1
             for index, item in enumerate(items['objects']):
                 vacancy['from'] = item['payment_from']
@@ -33,6 +33,4 @@ def get_salaries_by_lang(url, languages, secret_key):
             salaries_by_lang[language]['vacancies'] = vacancies
             vacancies = {}
         salaries_by_lang[language]['total'] = items['total']
-        page = 0
-    print(salaries_by_lang)
     return salaries_by_lang
