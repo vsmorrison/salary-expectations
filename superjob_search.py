@@ -34,5 +34,4 @@ def get_salaries_by_lang(url, languages, secret_key):
             vacancies = {}
         salaries_by_lang[language]['total'] = items['total']
         page = 0
-    print(salaries_by_lang)
     return salaries_by_lang
