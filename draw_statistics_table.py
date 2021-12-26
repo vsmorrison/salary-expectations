@@ -30,6 +30,3 @@ def draw_tables(table_data):
         row = []
     sj_table_instance = AsciiTable(sj_table, title_sj)
     print(sj_table_instance.table)
-
-
-draw_tables(TABLE_DATA)
