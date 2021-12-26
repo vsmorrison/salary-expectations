@@ -1,26 +1,14 @@
 import requests
 
 
-def count_vacancies(url, languages):
-    num_of_vacancies = {}
-    for language in languages:
-        payload = {
-            'text': f'программист {language}',
-            'area': '1',
-            'period': '30'
-        }
-        response = requests.get(url, params=payload)
-        response.raise_for_status()
-        num_of_vacancies[language] = response.json()['found']
-    return num_of_vacancies
-
-
-def get_raw_salaries(url, languages):
+def get_salaries_by_lang(url, languages):
     page = 0
     pages_number = 1
-    raw_salaries = []
-    salaries_by_language = []
+    salaries_by_lang = {}
+    vacancies = {}
+    vacancy = {}
     for language in languages:
+        salaries_by_lang[language] = {}
         while page < pages_number:
             payload = {
                 'text': f'{language}',
@@ -30,13 +18,17 @@ def get_raw_salaries(url, languages):
             }
             response = requests.get(url, params=payload)
             response.raise_for_status()
-            items = response.json()['items']
-            pages_number = response.json()['pages']
-            #print(language, page)
+            items = response.json()
+            pages_number = items['pages']
+            print(language, page)
             page += 1
-            for item in items:
-                salaries_by_language.append(item['salary'])
+            for index, item in enumerate(items['items']):
+                vacancy['salary'] = item['salary']
+                vacancies[index] = vacancy
+                vacancy = {}
+            salaries_by_lang[language]['vacancies'] = vacancies
+            vacancies = {}
+        salaries_by_lang[language]['total'] = items['found']
         page = 0
-        raw_salaries.append(salaries_by_language)
-        salaries_by_language = []
-    return raw_salaries
+    print(salaries_by_lang)
+    return salaries_by_lang
