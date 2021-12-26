@@ -19,7 +19,6 @@ def predict_hh_rub_salary(raw_salaries):
     return predicted_rub_salaries
 
 
-
 def predict_sj_rub_salary(raw_salaries):
     predicted_rub_salaries = {}
     vacancy = {}
