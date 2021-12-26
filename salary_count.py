@@ -13,5 +13,4 @@ def count_avg_salaries(predicted_salaries):
         avg_salaries[language]['vacancies_processed'] = vacancies_processed
         total_salary = 0
         vacancies_processed = 0
-    print(avg_salaries)
     return avg_salaries
