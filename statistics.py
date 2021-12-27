@@ -38,4 +38,3 @@ def make_vacancies_stats(raw_salaries, avg_salaries):
         statistics[language]['vacancies_processed'] = avg_salaries[language]['vacancies_processed']
         statistics[language]['avg_salary'] = avg_salaries[language]['avg_salary']
     return statistics
-
