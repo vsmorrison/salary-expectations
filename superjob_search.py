@@ -1,4 +1,3 @@
-
 import requests
 
 
@@ -17,7 +16,7 @@ def get_salaries_by_lang(url, languages, secret_key):
             }
             payload = {
                 'keyword': f'программист {language}',
-                'town': f'{input_data["Moscow_id"]}',
+                'town': f'{input_data["SPb_id"]}',
                 'catalogues': f'{input_data["SW_Development_id"]}',
                 'count': 100
             }

@@ -2,7 +2,6 @@ import superjob_search
 import headhunter_search
 import salary_count as sc
 import salary_prediction as sp
-from settings import SECRET_KEY
 
 
 LANGUAGES = [
