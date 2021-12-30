@@ -14,8 +14,8 @@ def main():
     hh_table = dst.draw_tables(hh_stat, 'HeadHunter Moscow')
     sj_stat = s.make_sj_statistics(languages, sj_secret_key)
     sj_table = dst.draw_tables(sj_stat, 'SuperJob Moscow')
-    print(sj_table.table)
     print(hh_table.table)
+    print(sj_table.table)
 
 
 if __name__ == '__main__':
