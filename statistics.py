@@ -5,12 +5,20 @@ import salary_prediction as sp
 
 
 def make_hh_statistics(languages):
+    statistics = {}
     hh_url = 'https://api.hh.ru/vacancies'
-    raw_salaries = headhunter_search.get_salaries_by_lang(hh_url, languages)
-    predicted_salaries = sp.predict_hh_rub_salary(raw_salaries)
-    avg_salaries = sc.count_avg_salaries(predicted_salaries)
-    stats = make_vacancies_stats(raw_salaries, avg_salaries)
-    return stats
+    for language in languages:
+        raw_salaries, total = headhunter_search.get_salaries_by_lang(hh_url,
+                                                                     language
+                                                                     )
+        filtered_hh_vacancies = sp.filter_hh_vacancies(raw_salaries)
+        predicted_salaries = sp.predict_rub_salaries(filtered_hh_vacancies)
+        avg_salary, vacancies_processed = sc.count_avg_salaries(predicted_salaries)
+        statistics[language] = {}
+        statistics[language]['total'] = total
+        statistics[language]['vacancies_processed'] = vacancies_processed
+        statistics[language]['avg_salary'] = avg_salary
+    return statistics
 
 
 def make_sj_statistics(languages, secret_key):
@@ -28,7 +36,6 @@ def make_sj_statistics(languages, secret_key):
         statistics[language]['total'] = total
         statistics[language]['vacancies_processed'] = vacancies_processed
         statistics[language]['avg_salary'] = avg_salary
-    print(statistics)
     return statistics
 
 
