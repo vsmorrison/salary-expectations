@@ -38,12 +38,3 @@ def make_sj_statistics(languages, secret_key):
         statistics[language]['avg_salary'] = avg_salary
     return statistics
 
-
-def make_vacancies_stats(raw_salaries, avg_salaries):
-    statistics = {}
-    for language in raw_salaries:
-        statistics[language] = {}
-        statistics[language]['vacancies_found'] = raw_salaries[language]['total']
-        statistics[language]['vacancies_processed'] = avg_salaries[language]['vacancies_processed']
-        statistics[language]['avg_salary'] = avg_salaries[language]['avg_salary']
-    return statistics
