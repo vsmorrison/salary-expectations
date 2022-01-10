@@ -1,6 +1,6 @@
 import requests
-import salary_count as sc
-import salary_prediction as sp
+import salary_prediction
+
 
 def get_salaries_by_lang(url, language):
     input_data = {'Moscow_id': 1, 'SPb_id': 2}
@@ -25,14 +25,39 @@ def get_salaries_by_lang(url, language):
     return salaries_by_lang, total
 
 
+def filter_hh_vacancies(raw_salaries):
+    filtered_hh_vacancies = []
+    salary = []
+    filtered_salary = []
+    for page in raw_salaries:
+        for vacancy in page:
+            salary.append(vacancy['salary'])
+    for item in salary:
+        if not item:
+            item = 0
+            filtered_hh_vacancies.append(item)
+        elif item['currency'] != 'RUR':
+            item = 0
+            filtered_hh_vacancies.append(item)
+        else:
+            if not item['from']:
+                filtered_salary = [0, item['to']]
+            elif not item['to']:
+                filtered_salary = [item['from'], 0]
+            else:
+                filtered_salary = [item['from'], item['to']]
+            filtered_hh_vacancies.append(filtered_salary)
+    return filtered_hh_vacancies
+
+
 def make_hh_statistics(languages):
     statistics = {}
     hh_url = 'https://api.hh.ru/vacancies'
     for language in languages:
         raw_salaries, total = get_salaries_by_lang(hh_url, language)
-        filtered_hh_vacancies = sp.filter_hh_vacancies(raw_salaries)
-        predicted_salaries = sp.predict_rub_salaries(filtered_hh_vacancies)
-        avg_salary, vacancies_processed = sc.count_avg_salaries(predicted_salaries)
+        filtered_hh_vacancies = salary_prediction.filter_hh_vacancies(raw_salaries)
+        predicted_salaries = salary_prediction.predict_rub_salaries(filtered_hh_vacancies)
+        avg_salary, vacancies_processed = salary_prediction.count_avg_salaries(predicted_salaries)
         statistics[language] = {}
         statistics[language]['total'] = total
         statistics[language]['vacancies_processed'] = vacancies_processed

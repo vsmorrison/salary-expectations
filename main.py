@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
-import statistics as s
-import draw_statistics_table as dst
+import superjob_search
+import headhunter_search
+import draw_statistics_table
 
 
 def main():
@@ -10,10 +11,10 @@ def main():
     languages = [
         'Javascript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'C', 'Go'
     ]
-    hh_stat = s.make_hh_statistics(languages)
-    hh_table = dst.draw_tables(hh_stat, 'HeadHunter Moscow')
-    sj_stat = s.make_sj_statistics(languages, sj_secret_key)
-    sj_table = dst.draw_tables(sj_stat, 'SuperJob Moscow')
+    hh_stat = headhunter_search.make_hh_statistics(languages)
+    hh_table = draw_statistics_table.draw_tables(hh_stat, 'HeadHunter Moscow')
+    sj_stat = superjob_search.make_sj_statistics(languages, sj_secret_key)
+    sj_table = draw_statistics_table.draw_tables(sj_stat, 'SuperJob Moscow')
     print(hh_table.table)
     print(sj_table.table)
 

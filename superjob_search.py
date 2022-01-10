@@ -1,6 +1,5 @@
 import requests
-import salary_count as sc
-import salary_prediction as sp
+import salary_prediction
 
 
 def get_salaries_by_lang(url, language, secret_key):
@@ -26,14 +25,30 @@ def get_salaries_by_lang(url, language, secret_key):
     return salaries_by_lang, total
 
 
+def filter_sj_vacancies(raw_salaries):
+    filtered_sj_vacancies = []
+    salary = []
+    for vacancy in raw_salaries:
+        salary.append(vacancy['payment_from'])
+        salary.append(vacancy['payment_to'])
+        salary.append(vacancy['currency'])
+        if not salary[0] and not salary[1] or salary[2] != 'rub':
+            salary = 0
+            filtered_sj_vacancies.append(salary)
+        else:
+            filtered_sj_vacancies.append(salary[0:2])
+        salary = []
+    return filtered_sj_vacancies
+
+
 def make_sj_statistics(languages, secret_key):
     statistics = {}
     sj_url = 'https://api.superjob.ru/2.0/vacancies/'
     for language in languages:
         raw_salaries, total = get_salaries_by_lang(sj_url, language, secret_key)
-        filtered_sj_vacancies = sp.filter_sj_vacancies(raw_salaries)
-        predicted_salaries = sp.predict_rub_salaries(filtered_sj_vacancies)
-        avg_salary, vacancies_processed = sc.count_avg_salaries(predicted_salaries)
+        filtered_sj_vacancies = salary_prediction.filter_sj_vacancies(raw_salaries)
+        predicted_salaries = salary_prediction.predict_rub_salaries(filtered_sj_vacancies)
+        avg_salary, vacancies_processed = salary_prediction.count_avg_salaries(predicted_salaries)
         statistics[language] = {}
         statistics[language]['total'] = total
         statistics[language]['vacancies_processed'] = vacancies_processed
