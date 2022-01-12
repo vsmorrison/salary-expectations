@@ -3,7 +3,7 @@ import salary_prediction
 from itertools import count
 
 
-def get_salaries_by_lang(url, language, secret_key, query_params):
+def get_salaries_by_lang(url, language, secret_key, town, catalogues):
     salaries_by_lang = []
     for page in count():
         headers = {
@@ -11,8 +11,8 @@ def get_salaries_by_lang(url, language, secret_key, query_params):
         }
         payload = {
             'keyword': f'программист {language}',
-            'town': query_params["Moscow_id"],
-            'catalogues': query_params["SW_Development_id"],
+            'town': town,
+            'catalogues': catalogues,
             'page': page,
             'count': 100
         }
@@ -48,10 +48,12 @@ def count_sj_salaries(raw_salaries):
     return avg_salary, vacancies_processed
 
 
-def make_sj_statistics(languages, secret_key, url):
+def make_sj_statistics(languages, secret_key, url, town, catalogues):
     statistics = {}
     for language in languages:
-        raw_salaries, total = get_salaries_by_lang(url, language, secret_key)
+        raw_salaries, total = get_salaries_by_lang(
+            url, language, secret_key, town, catalogues
+        )
         avg_salary, vacancies_processed = count_sj_salaries(raw_salaries)
         statistics[language] = {
             'total': total,

@@ -3,12 +3,12 @@ import salary_prediction
 from itertools import count
 
 
-def get_salaries_by_lang(url, language, query_params):
+def get_salaries_by_lang(url, language, area):
     salaries_by_lang = []
     for page in count():
         payload = {
             'text': f'программист {language}',
-            'area': query_params["Moscow_id"],
+            'area': area,
             'period': '30',
             'page': page
         }
@@ -39,7 +39,9 @@ def count_hh_salaries(raw_salaries):
         else:
             salary_from = 0
             salary_to = 0
-        predicted_salary = salary_prediction.predict_rub_salaries(salary_from, salary_to)
+        predicted_salary = salary_prediction.predict_rub_salaries(
+            salary_from, salary_to
+        )
         if predicted_salary:
             total_salary += predicted_salary
             vacancies_processed += 1
@@ -48,10 +50,10 @@ def count_hh_salaries(raw_salaries):
     return avg_salary, vacancies_processed
 
 
-def make_hh_statistics(languages, url):
+def make_hh_statistics(languages, url, area):
     statistics = {}
     for language in languages:
-        raw_salaries, total = get_salaries_by_lang(url, language)
+        raw_salaries, total = get_salaries_by_lang(url, language, area)
         avg_salary, vacancies_processed = count_hh_salaries(raw_salaries)
         statistics[language] = {
             'total': total,
