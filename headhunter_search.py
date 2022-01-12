@@ -17,7 +17,7 @@ def get_salaries_by_lang(url, language, area):
         response.raise_for_status()
         items = response.json()
         pages_number = items['pages']
-        print(language, page)
+        #print(language, page)
         salaries_by_lang.extend(items['items'])
         if page >= pages_number-1:
             break
