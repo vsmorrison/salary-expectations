@@ -9,16 +9,17 @@ def get_salaries_by_lang(url, language, area):
         payload = {
             'text': f'программист {language}',
             'area': area,
-            'period': '30',
+            'period': 30,
+            'per_page': 100,
             'page': page
         }
         response = requests.get(url, params=payload)
         response.raise_for_status()
         items = response.json()
         pages_number = items['pages']
-        #print(language, page)
+        print(language, page)
         salaries_by_lang.extend(items['items'])
-        if page >= pages_number:
+        if page >= pages_number-1:
             break
     total = items['found']
     return salaries_by_lang, total
