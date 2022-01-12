@@ -3,13 +3,12 @@ import salary_prediction
 from itertools import count
 
 
-def get_salaries_by_lang(url, language):
-    input_data = {'Moscow_id': 1, 'SPb_id': 2}
+def get_salaries_by_lang(url, language, query_params):
     salaries_by_lang = []
     for page in count():
         payload = {
             'text': f'программист {language}',
-            'area': input_data["Moscow_id"],
+            'area': query_params["Moscow_id"],
             'period': '30',
             'page': page
         }
@@ -17,7 +16,7 @@ def get_salaries_by_lang(url, language):
         response.raise_for_status()
         items = response.json()
         pages_number = items['pages']
-        print(language, page)
+        #print(language, page)
         salaries_by_lang.extend(items['items'])
         if page >= pages_number:
             break
@@ -27,6 +26,7 @@ def get_salaries_by_lang(url, language):
 
 def count_hh_salaries(raw_salaries):
     total_salary = 0
+    avg_salary = 0
     vacancies_processed = 0
     for vacancy in raw_salaries:
         if vacancy['salary']:

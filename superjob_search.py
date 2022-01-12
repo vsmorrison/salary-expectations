@@ -3,8 +3,7 @@ import salary_prediction
 from itertools import count
 
 
-def get_salaries_by_lang(url, language, secret_key):
-    input_data = {'Moscow_id': 4, 'SPb_id': 14, 'SW_Development_id': 48}
+def get_salaries_by_lang(url, language, secret_key, query_params):
     salaries_by_lang = []
     for page in count():
         headers = {
@@ -12,8 +11,8 @@ def get_salaries_by_lang(url, language, secret_key):
         }
         payload = {
             'keyword': f'программист {language}',
-            'town': input_data["Moscow_id"],
-            'catalogues': input_data["SW_Development_id"],
+            'town': query_params["Moscow_id"],
+            'catalogues': query_params["SW_Development_id"],
             'page': page,
             'count': 100
         }
