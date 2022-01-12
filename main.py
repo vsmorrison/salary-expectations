@@ -12,16 +12,23 @@ def main():
         'SuperJob': 'https://api.superjob.ru/2.0/vacancies/',
         'HeadHunter': 'https://api.hh.ru/vacancies'
     }
+    sj_query_params = {'Moscow_id': 4, 'SPb_id': 14, 'SW_Development_id': 48}
+    hh_query_params = {'Moscow_id': 1, 'SPb_id': 2}
     languages = [
-        'Ruby', 'Go'
+        'Javascript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'C', 'Go'
     ]
-    # languages = [
-    #     'Javascript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'C', 'Go'
-    # ]
-    hh_stat = headhunter_search.make_hh_statistics(languages, api_urls['HeadHunter'])
-    hh_table = draw_statistics_table.draw_tables(hh_stat, 'HeadHunter Moscow')
-    sj_stat = superjob_search.make_sj_statistics(languages, sj_secret_key, api_urls['SuperJob'])
-    sj_table = draw_statistics_table.draw_tables(sj_stat, 'SuperJob Moscow')
+    hh_stat = headhunter_search.make_hh_statistics(
+        languages, api_urls['HeadHunter'], hh_query_params['Moscow_id']
+    )
+    hh_table = draw_statistics_table.draw_table(hh_stat, 'HeadHunter Moscow')
+    sj_stat = superjob_search.make_sj_statistics(
+        languages,
+        sj_secret_key,
+        api_urls['SuperJob'],
+        sj_query_params['Moscow_id'],
+        sj_query_params['SW_Development_id']
+    )
+    sj_table = draw_statistics_table.draw_table(sj_stat, 'SuperJob Moscow')
     print(hh_table.table)
     print(sj_table.table)
 
