@@ -8,23 +8,20 @@ import draw_statistics_table
 def main():
     load_dotenv()
     sj_secret_key = os.getenv('SJ_SECRET_KEY')
-    api_urls = {
-        'SuperJob': 'https://api.superjob.ru/2.0/vacancies/',
-        'HeadHunter': 'https://api.hh.ru/vacancies'
-    }
     sj_query_params = {'Moscow_id': 4, 'SPb_id': 14, 'SW_Development_id': 48}
-    hh_query_params = {'Moscow_id': 1, 'SPb_id': 2}
+    hh_query_params = {'Moscow_id': 1, 'SPb_id': 2, 'days_from_publishing': 30}
+
     languages = [
         'Javascript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'C', 'Go'
     ]
     hh_stat = headhunter_search.make_hh_statistics(
-        languages, api_urls['HeadHunter'], hh_query_params['Moscow_id']
+        languages, hh_query_params['Moscow_id'],
+        hh_query_params['days_from_publishing']
     )
     hh_table = draw_statistics_table.draw_table(hh_stat, 'HeadHunter Moscow')
     sj_stat = superjob_search.make_sj_statistics(
         languages,
         sj_secret_key,
-        api_urls['SuperJob'],
         sj_query_params['Moscow_id'],
         sj_query_params['SW_Development_id']
     )
