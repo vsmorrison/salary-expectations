@@ -3,59 +3,44 @@ import salary_prediction
 from itertools import count
 
 
-def get_salaries_by_lang(url, language, area):
-    salaries_by_lang = []
+def get_vacancies_by_lang(language, area, period):
+    url = 'https://api.hh.ru/vacancies'
+    vacancies_by_lang = []
+    payload = {
+        'text': f'программист {language}',
+        'area': area,
+        'period': period,
+        'per_page': 100,
+    }
     for page in count():
-        payload = {
-            'text': f'программист {language}',
-            'area': area,
-            'period': 30,
-            'per_page': 100,
-            'page': page
-        }
+        payload['page'] = page
         response = requests.get(url, params=payload)
         response.raise_for_status()
-        items = response.json()
-        pages_number = items['pages']
-        #print(language, page)
-        salaries_by_lang.extend(items['items'])
+        vacancies = response.json()
+        pages_number = vacancies['pages']
+        vacancies_by_lang.extend(vacancies['items'])
         if page >= pages_number-1:
             break
-    total = items['found']
-    return salaries_by_lang, total
+    total = vacancies['found']
+    return vacancies_by_lang, total
 
 
-def count_hh_salaries(raw_salaries):
-    total_salary = 0
-    avg_salary = 0
-    vacancies_processed = 0
-    for vacancy in raw_salaries:
-        if vacancy['salary']:
-            if vacancy['salary']['currency'] == 'RUR':
-                salary_from = vacancy['salary']['from']
-                salary_to = vacancy['salary']['to']
-            else:
-                salary_from = 0
-                salary_to = 0
-        else:
-            salary_from = 0
-            salary_to = 0
-        predicted_salary = salary_prediction.predict_rub_salaries(
-            salary_from, salary_to
-        )
-        if predicted_salary:
-            total_salary += predicted_salary
-            vacancies_processed += 1
-    if vacancies_processed:
-        avg_salary = int(total_salary / vacancies_processed)
-    return avg_salary, vacancies_processed
+def count_hh_predicted_salary(vacancy):
+    if not vacancy['salary'] or vacancy['salary']['currency'] != 'RUR':
+        return None
+    return salary_prediction.predict_rub_salary(
+        vacancy['salary']['from'], vacancy['salary']['to']
+    )
 
 
-def make_hh_statistics(languages, url, area):
+def make_hh_statistics(languages, area, period):
     statistics = {}
     for language in languages:
-        raw_salaries, total = get_salaries_by_lang(url, language, area)
-        avg_salary, vacancies_processed = count_hh_salaries(raw_salaries)
+        raw_vacancies, total = get_vacancies_by_lang(language, area, period)
+        avg_salary, vacancies_processed = \
+            salary_prediction.count_avg_salaries(
+                raw_vacancies, count_hh_predicted_salary
+            )
         statistics[language] = {
             'total': total,
             'vacancies_processed': vacancies_processed,
