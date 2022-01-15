@@ -38,7 +38,7 @@ def make_hh_statistics(languages, area, period):
     for language in languages:
         raw_vacancies, total = get_vacancies_by_lang(language, area, period)
         avg_salary, vacancies_processed = \
-            salary_prediction.count_avg_salaries(
+            salary_prediction.count_avg_salary(
                 raw_vacancies, count_hh_predicted_salary
             )
         statistics[language] = {

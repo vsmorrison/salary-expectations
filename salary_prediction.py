@@ -10,7 +10,7 @@ def predict_rub_salary(salary_from, salary_to):
     return prediction
 
 
-def count_avg_salaries(raw_vacancies, count_salary):
+def count_avg_salary(raw_vacancies, count_salary):
     avg_salary = 0
     total_salary = 0
     vacancies_processed = 0

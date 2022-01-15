@@ -42,7 +42,7 @@ def make_sj_statistics(languages, secret_key, town, catalogues):
             language, secret_key, town, catalogues
         )
         avg_salary, vacancies_processed = \
-            salary_prediction.count_avg_salaries(
+            salary_prediction.count_avg_salary(
                 raw_vacancies, count_sj_predicted_salary
             )
         statistics[language] = {
